@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" width="1600" height="400" role="img" aria-label="Sosia — fuzzy matching and record deduplication">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172554"/>
+      <stop offset="0.55" stop-color="#1e40af"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <g id="person">
+      <circle cx="0" cy="-70" r="52"/>
+      <path d="M -84 88 A 84 84 0 0 1 84 88 Z"/>
+    </g>
+  </defs>
+
+  <!-- background -->
+  <rect width="1600" height="400" rx="28" fill="url(#bg)"/>
+  <circle cx="1180" cy="-60" r="260" fill="#ef4444" opacity="0.10"/>
+  <circle cx="240" cy="440" r="240" fill="#ffffff" opacity="0.05"/>
+  <!-- giant watermark duplicates -->
+  <use href="#person" transform="translate(1430 260) scale(2.6)" fill="#ffffff" opacity="0.05"/>
+  <use href="#person" transform="translate(1530 320) scale(2.6)" fill="#f87171" opacity="0.06"/>
+
+  <!-- logo mark -->
+  <g transform="translate(405 190) scale(0.78)">
+    <use href="#person" transform="translate(-34 -20)" fill="#f87171" opacity="0.8"/>
+    <use href="#person" transform="translate(34 20) scale(1.06)" fill="#ffffff"/>
+    <circle cx="122" cy="118" r="46" fill="#ffffff"/>
+    <g stroke-width="9" stroke-linecap="round" fill="none">
+      <path d="M 100 111 Q 111 100 122 111 T 144 111" stroke="#2563eb"/>
+      <path d="M 100 127 Q 111 116 122 127 T 144 127" stroke="#ef4444"/>
+    </g>
+  </g>
+
+  <!-- wordmark + tagline -->
+  <g font-family="-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" fill="#ffffff">
+    <text x="570" y="205" font-size="118" font-weight="800" letter-spacing="-2">Sosia</text>
+    <text x="574" y="262" font-size="33" font-weight="500" opacity="0.92">Fuzzy matching &amp; record deduplication</text>
+    <text x="574" y="308" font-size="20" font-weight="600" letter-spacing="2.5" opacity="0.6">EVERY LANGUAGE · ZERO DEPENDENCIES · PURE PYTHON</text>
+  </g>
+</svg>

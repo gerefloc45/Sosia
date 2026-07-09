@@ -1,8 +1,8 @@
 <div align="center">
 
-# 👥 Sosia
+<img src="assets/banner.svg" alt="Sosia — fuzzy matching and record deduplication, every language, zero dependencies" width="100%">
 
-**Find the "lookalikes" in your data: fuzzy matching and record deduplication — in every language, with zero dependencies**
+<br>
 
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue?logo=python&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)

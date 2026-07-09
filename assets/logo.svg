@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Sosia logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172554"/>
+      <stop offset="0.55" stop-color="#1e40af"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <!-- person = head + shoulder dome, drawn around local origin -->
+    <g id="person">
+      <circle cx="0" cy="-70" r="52"/>
+      <path d="M -84 88 A 84 84 0 0 1 84 88 Z"/>
+    </g>
+  </defs>
+
+  <!-- background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="96" cy="72" r="150" fill="#ef4444" opacity="0.12"/>
+  <circle cx="452" cy="470" r="190" fill="#ffffff" opacity="0.05"/>
+
+  <!-- the ghost duplicate (red) -->
+  <use href="#person" transform="translate(216 232)" fill="#f87171" opacity="0.8"/>
+  <!-- the original (white) -->
+  <use href="#person" transform="translate(284 272) scale(1.06)" fill="#ffffff"/>
+
+  <!-- fuzzy-match badge: approximately equal, one wave blue one wave red -->
+  <circle cx="396" cy="398" r="60" fill="#ffffff"/>
+  <g stroke-width="11" stroke-linecap="round" fill="none">
+    <path d="M 368 390 Q 382 376 396 390 T 424 390" stroke="#2563eb"/>
+    <path d="M 368 410 Q 382 396 396 410 T 424 410" stroke="#ef4444"/>
+  </g>
+</svg>
