@@ -2,7 +2,7 @@
 
 # 👥 Sosia
 
-**Find the "lookalikes" in your data: fuzzy matching and record deduplication — in every language, with zero dependencies**
+**Find the "Sosia" in your data: fuzzy matching and record deduplication — in every language, with zero dependencies**
 
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue?logo=python&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
