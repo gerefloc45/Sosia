@@ -1,11 +1,11 @@
-"""Pipeline completa di deduplica.
+"""Full deduplication pipeline.
 
-    testi -> normalizza -> shingle -> firma MinHash -> indice LSH
-          -> coppie candidate -> verifica con Jaccard vero
-          -> cluster di duplicati (union-find)
+    texts -> normalize -> shingles -> MinHash signature -> LSH index
+          -> candidate pairs -> verification with true Jaccard
+          -> duplicate clusters (union-find)
 
-L'LSH riduce le coppie da controllare da O(n^2) a quasi lineare; la
-verifica finale con la similarita' vera elimina i falsi positivi.
+The LSH cuts the pairs to check from O(n^2) to near-linear; the final
+verification with the true similarity removes the false positives.
 """
 
 from __future__ import annotations
@@ -24,15 +24,18 @@ def find_duplicates(
     num_perm: int = 128,
     bands: int = 32,
 ) -> list[tuple[int, int, float]]:
-    """Trova le coppie di testi con Jaccard (su shingle) >= threshold.
+    """Find the pairs of texts with Jaccard (over shingles) >= threshold.
 
-    Con k=None la lunghezza degli shingle si adatta allo script di ogni
-    testo (2 per cinese/giapponese/coreano, 3 altrimenti).
-    Ritorna triple (indice_a, indice_b, similarita') ordinate dalla
-    coppia piu' simile alla meno simile.
+    With k=None the shingle length adapts to each text's script (2 for
+    Chinese/Japanese/Korean, 3 otherwise).
+    Empty texts (or texts that become empty after normalization) are
+    ignored: "empty" is not content, so two empty fields do NOT count
+    as duplicates of each other.
+    Returns triples (index_a, index_b, similarity) sorted from the most
+    similar pair to the least similar.
     """
     if not 0.0 < threshold <= 1.0:
-        raise ValueError("threshold deve essere in (0, 1]")
+        raise ValueError("threshold must be in (0, 1]")
 
     normalized = [normalize(t) for t in texts]
     shingle_sets = [shingles(t, k) for t in normalized]
@@ -40,6 +43,8 @@ def find_duplicates(
     hasher = MinHasher(num_perm=num_perm)
     index = LSHIndex(num_perm=num_perm, bands=bands)
     for i, s in enumerate(shingle_sets):
+        if not s:
+            continue
         index.insert(i, hasher.signature(s))
 
     results = []
@@ -57,18 +62,18 @@ def cluster_duplicates(
     threshold: float = 0.7,
     **kwargs,
 ) -> list[list[int]]:
-    """Raggruppa i duplicati in cluster con union-find.
+    """Group duplicates into clusters with union-find.
 
-    Se A~B e B~C, allora A, B e C finiscono nello stesso cluster anche
-    se A e C non superano la soglia direttamente (chiusura transitiva).
-    Ritorna solo i cluster con almeno 2 elementi, il piu' grande prima.
+    If A~B and B~C, then A, B and C end up in the same cluster even if
+    A and C don't pass the threshold directly (transitive closure).
+    Returns only clusters with at least 2 elements, largest first.
     """
     pairs = find_duplicates(texts, threshold=threshold, **kwargs)
 
     parent = list(range(len(texts)))
 
     def find(x: int) -> int:
-        # path compression: appiattisce l'albero mentre risale
+        # path compression: flattens the tree while walking up
         root = x
         while parent[root] != root:
             root = parent[root]

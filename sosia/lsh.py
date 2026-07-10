@@ -1,17 +1,17 @@
-"""LSH (Locality-Sensitive Hashing) a bande sulle firme MinHash.
+"""Banded LSH (Locality-Sensitive Hashing) over MinHash signatures.
 
-Il problema: con n record ci sono n*(n-1)/2 coppie. Su 1 milione di record
-sono ~500 miliardi di confronti — impossibile.
+The problem: with n records there are n*(n-1)/2 pairs. On 1 million
+records that's ~500 billion comparisons — impossible.
 
-La soluzione: spezza ogni firma in `bands` bande di `rows` valori ciascuna.
-Due record finiscono nello stesso "bucket" se ALMENO UNA banda coincide
-esattamente. Coppie simili condividono quasi sicuramente una banda; coppie
-diverse quasi mai. Cosi' confrontiamo solo chi collide in un bucket.
+The solution: split each signature into `bands` bands of `rows` values
+each. Two records land in the same "bucket" if AT LEAST ONE band matches
+exactly. Similar pairs almost certainly share a band; dissimilar pairs
+almost never do. So we only compare the ones that collide in a bucket.
 
-La probabilita' di diventare candidati per una coppia con Jaccard s e':
-    P(candidato) = 1 - (1 - s^rows)^bands
-una curva a S: quasi 0 sotto la soglia, quasi 1 sopra. La soglia
-approssimata e' (1/bands)^(1/rows).
+The probability of becoming candidates for a pair with Jaccard s is:
+    P(candidate) = 1 - (1 - s^rows)^bands
+an S-curve: nearly 0 below the threshold, nearly 1 above. The
+approximate threshold is (1/bands)^(1/rows).
 """
 
 from __future__ import annotations
@@ -21,17 +21,17 @@ from typing import Hashable, Iterator
 
 
 class LSHIndex:
-    """Indice LSH: inserisci firme, poi chiedi le coppie candidate."""
+    """LSH index: insert signatures, then ask for the candidate pairs."""
 
     def __init__(self, num_perm: int = 128, bands: int = 32) -> None:
         if num_perm % bands != 0:
             raise ValueError(
-                f"num_perm ({num_perm}) deve essere divisibile per bands ({bands})"
+                f"num_perm ({num_perm}) must be divisible by bands ({bands})"
             )
         self.bands = bands
         self.rows = num_perm // bands
-        # un dizionario di bucket per ogni banda:
-        # buckets[banda][tupla_di_valori] -> lista di chiavi record
+        # one dict of buckets per band:
+        # buckets[band][tuple_of_values] -> list of record keys
         self._buckets: list[dict[tuple, list[Hashable]]] = [
             defaultdict(list) for _ in range(bands)
         ]
@@ -39,16 +39,16 @@ class LSHIndex:
 
     @property
     def threshold(self) -> float:
-        """Soglia di Jaccard approssimata sopra cui le coppie diventano
-        candidate: (1/bands)^(1/rows)."""
+        """Approximate Jaccard threshold above which pairs become
+        candidates: (1/bands)^(1/rows)."""
         return (1.0 / self.bands) ** (1.0 / self.rows)
 
     def insert(self, key: Hashable, signature: tuple[int, ...]) -> None:
-        """Indicizza la firma di un record identificato da `key`."""
+        """Index the signature of the record identified by `key`."""
         if key in self._keys:
-            raise KeyError(f"chiave duplicata nell'indice: {key!r}")
+            raise KeyError(f"duplicate key in index: {key!r}")
         if len(signature) != self.bands * self.rows:
-            raise ValueError("lunghezza firma diversa da num_perm dell'indice")
+            raise ValueError("signature length differs from the index num_perm")
         self._keys.add(key)
         for band in range(self.bands):
             start = band * self.rows
@@ -56,10 +56,10 @@ class LSHIndex:
             self._buckets[band][chunk].append(key)
 
     def candidate_pairs(self) -> Iterator[tuple[Hashable, Hashable]]:
-        """Tutte le coppie di record che condividono almeno un bucket.
+        """All pairs of records that share at least one bucket.
 
-        Ogni coppia viene emessa una sola volta anche se collide in
-        piu' bande.
+        Each pair is emitted only once even if it collides in
+        multiple bands.
         """
         seen: set[tuple] = set()
         for band_buckets in self._buckets:

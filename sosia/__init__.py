@@ -1,10 +1,10 @@
-"""sosia - fuzzy matching e deduplica record, in ogni lingua.
+"""sosia - fuzzy matching and record deduplication, in every language.
 
-Livelli:
-    similarity  -> confronto esatto tra due stringhe (Levenshtein, Jaccard)
-    minhash     -> firme compatte che stimano la similarita' di Jaccard
-    lsh         -> indice che trova coppie candidate senza O(n^2)
-    dedupe      -> pipeline completa: record -> cluster di duplicati
+Layers:
+    similarity  -> exact comparison between two strings (Levenshtein, Jaccard)
+    minhash     -> compact signatures that estimate Jaccard similarity
+    lsh         -> index that finds candidate pairs without O(n^2)
+    dedupe      -> full pipeline: records -> duplicate clusters
 """
 
 from .similarity import (

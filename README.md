@@ -6,7 +6,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue?logo=python&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
-![Tests](https://img.shields.io/badge/tests-38%20passed-success)
+![Tests](https://img.shields.io/badge/tests-45%20passed-success)
 ![Languages](https://img.shields.io/badge/languages-all%20🌍-orange)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
@@ -43,30 +43,39 @@ No installation, no dependencies — just Python 3.9+:
 ```bash
 git clone https://github.com/gerefloc45/sosia.git
 cd sosia
-python -m sosia esempi/clienti.csv --column nome,indirizzo,citta --threshold 0.6
+python -m sosia examples/customers.csv --column name,address,city --threshold 0.6
 ```
 
 Output:
 
 ```
-10 record, 3 gruppi di duplicati, 4 record ridondanti (soglia 0.6)
+10 records, 3 duplicate groups, 4 redundant records (threshold 0.6)
 
---- gruppo 1 (3 record) ---
-  riga 2: Mario Rossi Via Garibaldi 12 Milano
-  riga 4: MARIO ROSSI via garibaldi 12 MILANO
-  riga 6: Mario Rosi V. Garibaldi 12 Milano
+--- group 1 (3 records) ---
+  row 2: Mario Rossi Via Garibaldi 12 Milano
+  row 4: MARIO ROSSI via garibaldi 12 MILANO
+  row 6: Mario Rosi V. Garibaldi 12 Milano
 
---- gruppo 2 (2 record) ---
-  riga 3: Giulia Bianchi Corso Italia 5 Torino
-  riga 7: giulia bianchi corso italia 5 torino
+--- group 2 (2 records) ---
+  row 3: Giulia Bianchi Corso Italia 5 Torino
+  row 7: giulia bianchi corso italia 5 torino
 ...
 ```
 
 Also try the multilingual dataset:
 
 ```bash
-python -m sosia esempi/clienti_mondo.csv --column nome,indirizzo --threshold 0.6
+python -m sosia examples/world_customers.csv --column name,address --threshold 0.6
 ```
+
+Useful flags:
+
+| Flag | Effect |
+|------|--------|
+| `--output clean.csv` | writes a copy of the CSV without redundant duplicates (keeps the first of each group) |
+| `--json` | machine-readable output (groups with row numbers and texts), for scripts and integrations |
+| `--threshold 0.6` | minimum Jaccard similarity in (0, 1] (default: 0.7) |
+| `--encoding` | input file encoding (default: `utf-8-sig`) |
 
 ## 🧠 How it works
 
@@ -288,9 +297,10 @@ brute force is off the charts, while LSH stays near-linear.
 python -m unittest discover tests
 ```
 
-38 tests: known Levenshtein cases, MinHash properties (determinism,
-estimate accuracy), LSH behavior, end-to-end pipeline and
-multilingual normalization (🇯🇵 🇨🇳 🇸🇦 🇮🇱 🇮🇳 🇷🇺 🇬🇷 🇩🇪 🇰🇷).
+45 tests: known Levenshtein cases, MinHash properties (determinism,
+estimate accuracy), LSH behavior, end-to-end pipeline, CLI
+(`--output`, `--json`, error handling) and multilingual
+normalization (🇯🇵 🇨🇳 🇸🇦 🇮🇱 🇮🇳 🇷🇺 🇬🇷 🇩🇪 🇰🇷).
 
 ## 📁 Project structure
 
@@ -300,9 +310,9 @@ sosia/
 ├── minhash.py       MinHash signatures (universal hashing + FNV-1a)
 ├── lsh.py           banded LSH index
 ├── dedupe.py        full pipeline + union-find clustering
-└── __main__.py      CLI for CSV files
-tests/               38 unittest tests
-esempi/              demo CSVs (Italian + multilingual)
+└── __main__.py      CLI for CSV files (--output, --json)
+tests/               45 unittest tests
+examples/            demo CSVs (Italian + multilingual)
 ```
 
 ## 📄 License
